@@ -48,28 +48,34 @@ server.get('/forecast/minutely/:lat,:lon', function(req, res){
 server.get('/forecast/daily/:lat,:lon', function(req, res){
   $http.get(baseUrl + apiKey + '/' + req.params.lat+','+req.params.lon)
        .then(function(response){
+        var dailyData = response.data.daily.data;
+        var overIcon = response.data.daily.icon;
+        var overSummary = response.data.daily.summary;
         var dailyObj = [];
-        var len = response.data.daily.data.length;
+        var len = dailyData.length;
         for (i = 0; i < len; i += 1){
-          dailyObj.push({
-            summary: response.data.daily.data[i].summary,
-            icon: response.data.daily.data[i].icon,
-            precipProb: response.data.daily.data[i].precipProbability,
-            humidity: response.data.daily.data[i].humidity,
-            tempMin: response.data.daily.data[i].temperatureMin,
-            tempMax: response.data.daily.data[i].temperatureMax
-          })
+          var o = {
+            summary: dailyData[i].summary,
+            icon: dailyData[i].icon,
+            precipProb: dailyData[i].precipProbability,
+            humidity: dailyData[i].humidity,
+            tempMin: dailyData[i].temperatureMin,
+            tempMax: dailyData[i].temperatureMax
+          };
+          dailyObj.push(o);
         }
         var resObj = {
           latitude: response.data.latitude,
           longitude: response.data.longitude,
+          dailySummary: overSummary,
+          dailyIcon: overIcon,
           daily: dailyObj
         }
         res.status(200).json(resObj);
        })
        .catch(function(err){
          console.log(err);
-         res.status(500).send({msg: error});
+         res.status(500).send({msg: err});
        });
 
 });
