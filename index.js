@@ -29,6 +29,22 @@ server.get('/forecast/hourly/:lat,:lon', function(req, res){
        })
 });
 
+server.get('/forecast/minutely/:lat,:lon', function(req, res){
+  $http.get(baseUrl + apiKey + '/' + req.params.lat+','+req.params.lon)
+       .then(function(response){
+        var resObj = {
+          latitude: response.data.latitude,
+          longitude: response.data.longitude,
+          minutely: response.data.minutely
+        }
+        res.status(200).json(resObj);
+       })
+       .catch(function(err){
+         console.log(err);
+         res.status(500).send({msg: error});
+       })
+});
+
 server.get('/forecast/daily/:lat,:lon', function(req, res){
   $http.get(baseUrl + apiKey + '/' + req.params.lat+','+req.params.lon)
        .then(function(response){
