@@ -29,6 +29,35 @@ server.get('/forecast/hourly/:lat,:lon', function(req, res){
        })
 });
 
+server.get('/forecast/daily/:lat,:lon', function(req, res){
+  $http.get(baseUrl + apiKey + '/' + req.params.lat+','+req.params.lon)
+       .then(function(response){
+        var dailyObj = [];
+        var len = response.data.daily.data.length;
+        for (i = 0; i < len; i += 1){
+          dailyObj.push({
+            summary: response.data.daily.data[i].summary,
+            icon: response.data.daily.data[i].icon,
+            precipProb: response.data.daily.data[i].precipProbability,
+            humidity: response.data.daily.data[i].humidity,
+            tempMin: response.data.daily.data[i].temperatureMin,
+            tempMax: response.data.daily.data[i].temperatureMax
+          })
+        }
+        var resObj = {
+          latitude: response.data.latitude,
+          longitude: response.data.longitude,
+          daily: dailyObj
+        }
+        res.status(200).json(resObj);
+       })
+       .catch(function(err){
+         console.log(err);
+         res.status(500).send({msg: error});
+       });
+
+});
+
 server.listen(port, function(){
   console.log('Now listening on port...', port);
 });
