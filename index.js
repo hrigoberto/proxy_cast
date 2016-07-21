@@ -7,7 +7,7 @@ var logger = require('./logger');
 var authorize = require('./auth');
 
 var port = process.env.PORT || 8080;
-var apiKey = require('./config').apiKey;
+var apiKey = process.env.API || require('./config').apiKey;
 var baseUrl = 'https://api.forecast.io/forecast/'
 
 
